@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miaow Miaow drikker julebrus</title>
+    <!-- CSS skal ikke røres -->
+    <link rel="stylesheet" href="css-skal-ikke-roeres/miaow-miaow-drikker-julebrus.css">
+</head>
+
+<body>
+
+    <div id="container"><!-- DET ER IKKE LOV Å ENDRE PÅ NOE I HTML-KODEN! -->
+
+        <h1 id="main-heading">Miaow Miaow drikker julebrus</h1>
+
+        <img id="background-image" src="images/at-the-table.png">
+
+        <img id="cat-left" src="images/cat-left.png">
+
+        <img id="cat-right" src="images/cat-right.png">
+
+        <img id="waiter" src="images/waiter.png">
+
+        <div id="glass-1">
+            <div id="glass-1-content"></div><!-- Innholdet i glasset på venstre side -->
+        </div>
+
+        <div id="glass-2">
+            <div id="glass-2-content"></div><!-- Innholdet i glasset på høyre side -->
+        </div>
+
+    </div>
+
+    <div id="output-div">
+        <p>Her skrives det ut hva som skjer underveis</p>
+    </div><!-- DET ER IKKE LOV Å ENDRE PÅ NOE I HTML-KODEN! -->
+
+
+    <script>/* I denne script-tagen skal du kode JavaScript (ikke i ekstern fil) */
+        //Bruker object for å kunne samle flere "like" elementer, det er lettere og raskt å refere til hvert av elementene.
+        const glass = {
+            glass1: {
+                content: document.getElementById("glass-1-content"),
+                height: 0,
+            },
+            glass2: {
+                content: document.getElementById("glass-2-content"),
+                height: 0,
+            }
+        }
+
+        const soda = {
+            add: 40,
+            remove: 20,
+            maxAmount: 80,
+            minAmount: 0,
+        }
+
+        const waiter = document.getElementById("waiter");
+        const catLeft = document.getElementById("cat-left");
+        const catRight = document.getElementById("cat-right");
+
+        const output = document.getElementById("output-div");
+
+        let arrayList = []
+
+        waiter.onclick = function () {
+            // Hvis det som helles i ikke overstiger 80px, heller vi det i.
+            if (glass.glass1.height + soda.add <= soda.maxAmount) {
+                glass.glass1.height += soda.add
+                glass.glass1.content.style.height = `${glass.glass1.height}px`
+                arrayList.push(`Kelneren helte julebrus i venstre glass`)
+                //Hvis glasset ikke er fylt og at det som helles i overstiger 80px (max amount) fylles glasset med resterende væske.
+            } else if (glass.glass1.height != soda.maxAmount && glass.glass1.height + soda.add > soda.maxAmount) {
+                glass.glass1.height = soda.maxAmount
+                glass.glass1.content.style.height = `${glass.glass1.height}px`
+                arrayList.push(`Kelneren helte julebrus i venstre glass`)
+            }
+            if (glass.glass2.height + soda.add <= soda.maxAmount) {
+                glass.glass2.height += soda.add
+                glass.glass2.content.style.height = `${glass.glass2.height}px`
+                arrayList.push(`Kelneren helte julebrus i høyre glass`)
+            } else if (glass.glass2.height != soda.maxAmount && glass.glass2.height + soda.add > soda.maxAmount) {
+                glass.glass2.height = soda.maxAmount
+                glass.glass2.content.style.height = `${glass.glass2.height}px`
+                arrayList.push(`Kelneren helte julebrus i høyre glass`)
+            }
+            addTextToScreen()
+        }
+
+        catLeft.onclick = function () {
+            //Hvis mitt glass er 0 (tomt) vil den ikke gjøre noe.
+            if (glass.glass1.height - soda.remove < soda.minAmount) {
+                return;
+            }
+            glass.glass1.height = glass.glass1.height - soda.remove
+            glass.glass1.content.style.height = `${glass.glass1.height}px`
+            arrayList.push(`Katten drikker julebrus fra venstre glass`)
+            addTextToScreen()
+        }
+
+        catRight.onclick = function () {
+            //Hvis mitt glass er 0 (tomt) vil den ikke gjøre noe.
+            if (glass.glass2.height - soda.remove < soda.minAmount) {
+                return;
+            }
+            glass.glass2.height = glass.glass2.height - soda.remove
+            glass.glass2.content.style.height = `${glass.glass2.height}px`
+            arrayList.push(`Katten drikker julebrus fra høyre glass`)
+            addTextToScreen()
+        }
+
+        //Kilde til "for-loop"-en under. Hvor man går igjennom arrayet reversert ved hjelp av en "for-loop".
+        //https://www.freecodecamp.org/news/how-to-reverse-an-array-in-javascript-js-reverse-function/
+        function addTextToScreen() {
+            // Setter tekstboksen som viser hva som har skjedd i programmet til en tom "string", for ikke å vise samme tekst flere ganger.
+            output.innerHTML = ""
+            for (let i = arrayList.length - 1; i >= 0; i--) {
+                output.innerHTML += `Melding ${i + 1}` + `: ${arrayList[i]} <br>`
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>

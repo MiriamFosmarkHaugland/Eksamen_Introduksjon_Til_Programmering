@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miaow Miaow kjøper kinobilletter</title>
+    <!-- CSS skal ikke røres -->
+    <link rel="stylesheet" href="css-skal-ikke-roeres/miaow-miaow-kjoeper-kinobilletter.css">
+</head>
+
+<body>
+
+    <div id="container"><!-- DET ER IKKE LOV Å ENDRE PÅ NOE I HTML-KODEN! -->
+
+        <article id="billett-1"></article>
+        <!-- I disse 5 article legges det inn bilder av billettene for Oppgave 4-utvidelsen. -->
+        <article id="billett-2"></article>
+        <article id="billett-3"></article>
+        <article id="billett-4"></article>
+        <article id="billett-5"></article>
+
+        <h1 id="main-heading">Miaow Miaow kjøper kinobilletter</h1>
+
+        <div id="panel-div">
+
+            <h3 id="panel-heading">Kjøp kinobilletter her</h3>
+
+            <div id="adult-cats-div">
+                <span id="number-of-adult-tickets-p">Antall voksenbilletter: 0</span>
+                <input id="increase-adult-tickets-btn" type="button" value="+">
+                <input id="decrease-adult-tickets-btn" type="button" value="-">
+            </div>
+
+            <div id="children-cats-div">
+                <span id="number-of-children-tickets-p">Antall barnebilletter: 0</span>
+                <input id="increase-children-tickets-btn" type="button" value="+">
+                <input id="decrease-children-tickets-btn" type="button" value="-">
+            </div>
+
+            <div id="summary-div">
+                <h3>Kjøpsoversikt</h3>
+                <p>Totalpris voksenbilletter: 0,-</p>
+                <p>Totalpris barnebilletter: 0,-</p>
+                <p>Totalpris: 0,-</p>
+            </div>
+
+            <input id="buy-btn" type="button" value="Kjøp">
+
+        </div>
+
+        <img id="miaow-miaow" src="images/miaow-miaow.png">
+        <img id="happy-cat" src="images/happy-cat.png">
+
+        <img id="child-1" src="images/cat.png">
+        <img id="child-2" src="images/cat.png">
+        <img id="child-3" src="images/cat.png">
+
+    </div><!-- DET ER IKKE LOV Å ENDRE PÅ NOE I HTML-KODEN! -->
+
+
+    <script>/* I denne script-tagen skal du kode JavaScript (ikke i ekstern fil) */
+        //Bruker object for å kunne samle flere "like" elementer, det er lettere og raskt å refere til hvert av elementene.
+        const overview = {
+            adult: {
+                increaseBtn: document.getElementById("increase-adult-tickets-btn"),
+                decreaseBtn: document.getElementById("decrease-adult-tickets-btn"),
+                numberOfTicketsP: document.getElementById("number-of-adult-tickets-p"),
+            },
+            children: {
+                increaseBtn: document.getElementById("increase-children-tickets-btn"),
+                decreaseBtn: document.getElementById("decrease-children-tickets-btn"),
+                numberOfTicketsP: document.getElementById("number-of-children-tickets-p"),
+            }
+        }
+
+        const summaryDiv = document.getElementById("summary-div")
+        const buyBtn = document.getElementById("buy-btn");
+        //Setter alt antall og total priser til et startpunk av 0
+        let adultTicketAmount = 0
+        let childTicketAmount = 0
+        let adultTotalPrice = 0
+        let childTotalPrice = 0
+
+        // Brukt til å sjekke om kjøpet er fullført.
+        let finishedPurchase = false
+
+        const ticketPrices = { // Dette objektet må brukes for å få tak i billettprisene.
+            adultTicketPrice: 150,
+            childTicketPrice: 90
+        };
+
+        //Legger til 1 til "..TicketAmount". Den legger 1 til seg selv, så man holder styr på antall billetter.
+        function increaseAdultTickets() {
+            adultTicketAmount += 1
+            overview.adult.numberOfTicketsP.innerHTML = `Antall voksenbilletter: ${adultTicketAmount}`
+            updatePrices()
+        }
+
+        function increaseChildrenTickets() {
+            childTicketAmount += 1
+            overview.children.numberOfTicketsP.innerHTML = `Antall barnebilletter: ${childTicketAmount}`
+            updatePrices()
+        }
+
+        //Tar fra 1 hos "..TicketAmount" og passer på at man ikke går under 0. Den tar 1 fra seg selv, så man holder styr på antall billeter.
+        function decreaseAdultTickets() {
+            if (adultTicketAmount <= 0) {
+                return;
+            }
+            adultTicketAmount -= 1
+            overview.adult.numberOfTicketsP.innerHTML = `Antall voksenbilletter: ${adultTicketAmount}`
+            updatePrices()
+        }
+
+        function decreaseChildrenTickets() {
+            if (childTicketAmount <= 0) {
+                return;
+            }
+            childTicketAmount -= 1
+            overview.children.numberOfTicketsP.innerHTML = `Antall barnebilletter: ${childTicketAmount}`
+            updatePrices()
+        }
+
+        function updatePrices() {
+            //Ganger antall billetter med billett prisen, og får en total sum ut.
+            const adultPrice = adultTicketAmount * ticketPrices.adultTicketPrice
+            const childPrice = childTicketAmount * ticketPrices.childTicketPrice
+            //Template litterals brukes da det ikke var en id til "h3" og "p-taggene" som jeg kunne referere til for å endre teksten.
+            summaryDiv.innerHTML =
+                `<div>
+                    <h3>Kjøpsoversikt</h3>
+                    <p>Totalpris voksenbilletter: ${adultPrice},-</p>
+                    <p>Totalpris barnebilletter: ${childPrice},-</p>
+                    <p>Totalpris: ${adultPrice + childPrice},-</p>
+                </div>`
+        }
+
+        function makePurchase() {
+            if (finishedPurchase === true) {
+                return;
+            }
+            //Passer på at riktig antall av begge biletter blir kjøpt.
+            if (adultTicketAmount === 2 && childTicketAmount === 3) {
+                summaryDiv.innerHTML =
+                    `<div>
+                        <h3>Bilettene er kjøpt!</h3>
+                        <p>Ha en fin kinoopplevelse!</p>
+                    </div>`
+
+                //Kilde til "for-loop"-en under. Sett hvordan "getElementsByTagName" henter ut alle elementene i HTML-en som vi spesifiserer, her i dette tilfellet "article".
+                //Når man henter flere elementer slik, samles de i et array, man kan bruke en for-loop til å kjøre igjennom alle og ved hjelp av innerHTML kan tilføye et bilde.
+                //https://www.w3schools.com/jsref/met_document_getelementsbytagname.asp
+                let billettList = document.getElementsByTagName("article");
+                for (let i = 0; i < billettList.length; i++) {
+                    billettList[i].innerHTML = `<img src="images/billett.png">`
+                }
+
+                finishedPurchase = true;
+            } else {
+                summaryDiv.innerHTML =
+                    `<div>
+                        <h3>Noe er feil!</h3>
+                        <p>Jeg er en smart kunstig intelligens og ser at noe er feil med kjøpet!</p>
+                    </div>`
+            }
+        }
+        overview.adult.increaseBtn.onclick = increaseAdultTickets
+        overview.children.increaseBtn.onclick = increaseChildrenTickets
+        overview.adult.decreaseBtn.onclick = decreaseAdultTickets
+        overview.children.decreaseBtn.onclick = decreaseChildrenTickets
+        buyBtn.onclick = makePurchase
+    </script>
+</body>
+
+</html>

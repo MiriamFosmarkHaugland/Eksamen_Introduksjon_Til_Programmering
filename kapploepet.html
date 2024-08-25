@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kappløpet</title>
+    <!-- CSS skal ikke røres -->
+    <link rel="stylesheet" href="css-skal-ikke-roeres/kapploepet.css">
+</head>
+
+<body>
+
+    <div id="container"><!-- DET ER IKKE LOV Å ENDRE PÅ NOE I HTML-KODEN! -->
+
+        <h1 id="main-heading">Kappløpet</h1>
+        <h2 id="winner-status">Løpet er i gang</h2>
+
+        <input id="move-miaows-left-leg-btn" type="button" value="Beveg Miaows venstre ben">
+        <input id="move-miaows-right-leg-btn" type="button" value="Beveg Miaows høyre ben">
+
+        <div id="pond"></div>
+        <div id="finish-line"></div>
+        <img id="building" src="images/building-2.png">
+
+        <img id="eskilpadde" src="images/eskilpadde.png">
+
+        <img id="miaow-miaow" src="images/miaow-miaow-runner.png">
+
+        <img id="geir-geit" src="images/geirgeit.png">
+
+    </div><!-- DET ER IKKE LOV Å ENDRE PÅ NOE I HTML-KODEN! -->
+
+
+    <script>/* I denne script-tagen skal du kode JavaScript (ikke i ekstern fil) */
+
+        /*
+            Beskrivelse av setInterval-funksjonen.
+            ---
+            setInterval(function(){
+                // Kode som skal skje for hver x millisekunder plasseres her
+            }, 1000); // 1000 betyr 1000 millisekunder som betyr 1 sekund. 
+        */
+        //Bruker object for å kunne samle flere "like" elementer, det er lettere og raskt å refere til hvert av elementene.
+        const runners = {
+            eskildPadde: {
+                element: document.getElementById("eskilpadde"),
+                left: 0,
+            },
+            geirGeit: {
+                element: document.getElementById("geir-geit"),
+                left: 0,
+            },
+            miaowMiaow: {
+                element: document.getElementById("miaow-miaow"),
+                elementLeftLegBtn: document.getElementById("move-miaows-left-leg-btn"),
+                elementRightLegBtn: document.getElementById("move-miaows-right-leg-btn"),
+                left: 0
+            }
+        }
+        //Maks lengde dyrene kan løpe.
+        const runningFieldMaxLength = 770
+
+        //Minimum og maksimum lengde miaowMiaow kan løpe.
+        const miaowMiaowMaxDistance = 10
+        const miaowMiaowMinDisctance = 5
+
+        //Brukt til å sikre brukeren skal skifte mellom hvilken knap de trykker på.
+        let miaowMiaowBtnClicked = null
+        //Sjekker om noen har vunnet, så jeg kan kode når alle dyrene skal stoppe. Satt til "false" til å starte med.
+        let isGameOver = false
+
+        let mainHeading = document.getElementById("main-heading");
+        let winnerStatus = document.getElementById("winner-status");
+
+        //Valgte å lage separerte "setInterval" da to av dyrene har ulik hastighet.
+        const intervalEskildPadde = setInterval(eskildPaddeRun, 1000);
+        const intervalGeirGeit = setInterval(geirGeitRun, 500);
+
+        function eskildPaddeRun() {
+            if (isGameOver === true) {
+                //Får eskildPadde til å stoppe om løpet er ferdig.
+                clearInterval(intervalEskildPadde);
+            }
+            runners.eskildPadde.left += 3;
+            //Her opdaterer jeg HTML elementets CSS til å "løpe" X antall pixler
+            runners.eskildPadde.element.style.left = `${runners.eskildPadde.left}px`;
+            //Om eskildPadde vinner stopper intervallen og han står stille.
+            if (runners.eskildPadde.left > runningFieldMaxLength) {
+                clearInterval(intervalEskildPadde);
+                winnerStatus.innerHTML = `EskildPadde vant!`;
+                isGameOver = true
+            }
+        }
+
+        function geirGeitRun() {
+            if (isGameOver === true) {
+                clearInterval(intervalGeirGeit);
+            }
+            let chanceOfJumpingBack = Math.random();
+            //GeirGeit har en 30% sjangse for å ta et hopp tilbake.
+            if (chanceOfJumpingBack >= 0.70) {
+                runners.geirGeit.left -= 10;
+            } else {
+                runners.geirGeit.left += 12;
+            }
+            runners.geirGeit.element.style.left = `${runners.geirGeit.left}px`;
+            if (runners.geirGeit.left > runningFieldMaxLength) {
+                clearInterval(intervalGeirGeit);
+                winnerStatus.innerHTML = `GeirGeit vant!`;
+                isGameOver = true
+            }
+        }
+
+        function miaowMiaowRun() {
+            if (isGameOver === true) {
+                return;
+            }
+            //Kilde til første kodelinje under (Skrevet av "Francisc" og redigert av "danday74"). Hvordan man finner et tilfeldig tall mellom to faste tall.
+            //https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript
+            let chanceOfDistance = Math.floor(Math.random() * (miaowMiaowMaxDistance - miaowMiaowMinDisctance + 1) + miaowMiaowMinDisctance);
+            runners.miaowMiaow.left += chanceOfDistance;
+            runners.miaowMiaow.element.style.left = `${runners.miaowMiaow.left}px`;
+            if (runners.miaowMiaow.left > runningFieldMaxLength) {
+                winnerStatus.innerHTML = `MiaowMiaow vant!`;
+                isGameOver = true
+            }
+        }
+
+        function miaowMiaowLeftBtnClick() {
+            // Hvis venstre knapp var trykket ret før den ble trykket igjen, skal vi ikke gjøre noe, høyre ben skal gå først.
+            if (miaowMiaowBtnClicked === true) {
+                return;
+            }
+            miaowMiaowRun();
+            miaowMiaowBtnClicked = true;
+        }
+
+        function miaowMiaowRightBtnClick() {
+            if (miaowMiaowBtnClicked === false) {
+                return;
+            }
+            miaowMiaowRun();
+            miaowMiaowBtnClicked = false;
+        }
+
+        //Trykke på venstre og høyre knapp til MiaowMiaow
+        runners.miaowMiaow.elementLeftLegBtn.onclick = miaowMiaowLeftBtnClick;
+        runners.miaowMiaow.elementRightLegBtn.onclick = miaowMiaowRightBtnClick;
+    </script>
+
+</body>
+
+</html>
